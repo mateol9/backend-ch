@@ -79,6 +79,7 @@ class ProductManager {
     } else {
       console.log("Se ha encontrado un producto que coincide con el ID: " + id);
       console.log(products[productFound]);
+      return products[productFound];
     }
   }
 
@@ -117,30 +118,4 @@ class ProductManager {
   }
 }
 
-///////////////////// TESTING ////////////////////////
-
-// let pm = new ProductManager("./products.json");
-
-// console.log(pm.getProducts());
-
-// pm.addProduct(
-//   "producto prueba",
-//   "Este es un producto prueba",
-//   200,
-//   "Sin imagen",
-//   "abc123",
-//   25
-// );
-
-// console.log(pm.getProducts());
-
-// pm.getProductById(1);
-
-// // El metodo recibe un ID como primer parametro y el objeto actualizado como segundo parametro
-// pm.updateProduct(1, {
-//   title: "prueba updated",
-//   description: "description updated",
-//   stock: 15,
-// });
-
-// pm.deleteProduct(1);
+module.exports = ProductManager;

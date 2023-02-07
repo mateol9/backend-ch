@@ -36,5 +36,5 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Aplicacion iniciada en el puerto: ${PORT}`);
+  console.log(`Aplicacion iniciada en http"//localhost:${PORT}`);
 });

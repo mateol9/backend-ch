@@ -1,0 +1,32 @@
+[
+    {
+        "id": 2,
+        "title": "caca",
+        "description": "caca",
+        "code": "11222",
+        "price": null,
+        "status": true,
+        "stock": 12,
+        "category": "asd"
+    },
+    {
+        "id": 3,
+        "title": "caca",
+        "description": "caca",
+        "code": "112223",
+        "price": null,
+        "status": true,
+        "stock": 12,
+        "category": "asd"
+    },
+    {
+        "id": 4,
+        "title": "caca",
+        "description": "caca",
+        "code": "1122232",
+        "price": null,
+        "status": true,
+        "stock": 12,
+        "category": "asd"
+    }
+]

@@ -1,0 +1,24 @@
+<h1>
+  Lista de productos
+</h1>
+
+<div>
+  <ul style="list-style-type: none; font-weight: bold; font-size:20px; display: flex; flex-wrap: wrap; gap: 20px;">
+    {{#each products}}
+      <li style="margin-bottom: 20px; border: 2px solid black; padding: 10px; width: 300px; background-color: aquamarine; border-radius: 15px">
+    <div>
+      Producto: {{this.title}}
+    </div>
+    <div>
+      Precio: {{this.price}}
+    </div>
+    <div>
+      Stock: {{this.stock}}
+    </div>
+    <div>
+      Descripcion: {{this.description}}
+    </div>
+  </li>
+    {{/each}}
+  </ul>
+</div>

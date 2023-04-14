@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs";
 
 class Product {
   constructor(
@@ -24,7 +24,7 @@ class Product {
   }
 }
 
-class ProductManager {
+export default class ProductManager {
   constructor(path) {
     this.path = path;
   }
@@ -154,5 +154,3 @@ class ProductManager {
     }
   }
 }
-
-module.exports = ProductManager;

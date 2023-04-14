@@ -4,10 +4,13 @@
 
 <div>
   <ul style="list-style-type: none; font-weight: bold; font-size:20px; display: flex; flex-wrap: wrap; gap: 20px;">
-    {{#each products}}
+    {{#each products.payload}}
       <li style="margin-bottom: 20px; border: 2px solid black; padding: 10px; width: 300px; background-color: aquamarine; border-radius: 15px">
     <div>
       Producto: {{this.title}}
+    </div>
+    <div>
+      Categoria: {{this.category}}
     </div>
     <div>
       Precio: {{this.price}}
@@ -18,7 +21,23 @@
     <div>
       Descripcion: {{this.description}}
     </div>
+    <div>
+      <button>Agregar al carrito</button>
+    </div>
   </li>
     {{/each}}
   </ul>
 </div>
+
+<a href="/products?page=1">Primer pagina</a>
+{{#if products.hasPrevPage}}
+  <a href="{{products.prevLink}}">Página anterior</a>
+{{/if}}
+{{#if products.hasNextPage}}
+  <a href="{{products.nextLink}}">Página siguiente</a>
+{{/if}}
+<a href="/products?page={{products.totalPages}}">Ultima pagina</a>
+<br>
+<br>
+
+<script src="/js/products.js"></script>

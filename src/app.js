@@ -1,19 +1,28 @@
-const express = require("express");
-const handlebars = require("express-handlebars");
-const productsRouter = require("./routes/products.router.js");
-const cartsRouter = require("./routes/carts.router.js");
-const viewsRouter = require("./routes/views.router");
-const ProductManager = require("./managers/ProductManager");
-const Server = require("socket.io").Server;
+import express from "express";
+import { engine } from "express-handlebars";
+import productsRouter from "./routes/productsDB.router.js";
+import cartsRouter from "./routes/cartsDB.router.js";
+import viewsRouter from "./routes/views.router.js";
+import ProductManager from "./dao/ProductManagerDB.js";
+import mongoose from "mongoose";
+import { Server } from "socket.io";
 
-const pm = new ProductManager("./src/files/products.json");
+const pm = new ProductManager();
 const app = express();
 const PORT = 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.engine("handlebars", handlebars.engine());
+app.engine(
+  "handlebars",
+  engine({
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    },
+  })
+);
 app.set("views", "./src/views");
 app.set("view engine", "handlebars");
 
@@ -29,8 +38,23 @@ const serverHttp = app.listen(PORT, () => {
 
 const serverSockets = new Server(serverHttp);
 
-serverSockets.on("connection", (socket) => {
+serverSockets.on("connection", async (socket) => {
   console.log(`Se han conectado, socket id ${socket.id}`);
-  let products = pm.getProducts();
-  socket.emit("products", products);
+  let products = await pm.getProducts();
+  socket.emit("products", products.payload);
 });
+
+const connect = async () => {
+  try {
+    await mongoose.connect(
+      "mongodb+srv://mateol9:LQv8S7LuNHfo96Wo@cluster0.l0igvqy.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce"
+    );
+    console.log("Conexion correcta");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+connect();
+
+serverSockets.on("error", (error) => console.log(error));

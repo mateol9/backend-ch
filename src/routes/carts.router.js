@@ -1,5 +1,5 @@
-const Router = require("express").Router;
-const CartsManager = require("../managers/CartsManager");
+import { Router } from "express";
+import CartsManager from "../dao/CartsManagerFS.js";
 
 const router = Router();
 const cm = new CartsManager("./src/files/carts.json");
@@ -23,4 +23,4 @@ router.get("*", (req, res) => {
   res.status(404).send("Page not found");
 });
 
-module.exports = router;
+export default router;

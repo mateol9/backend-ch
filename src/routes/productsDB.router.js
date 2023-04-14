@@ -1,22 +1,24 @@
 import { Router } from "express";
-import ProductManager from "../dao/ProductManagerFS.js";
+import ProductManager from "../dao/ProductManagerDB.js";
 
 const router = Router();
-const pm = new ProductManager("./src/files/products.json");
+const pm = new ProductManager();
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   res.setHeader("Content-Type", "application/json");
-
-  if (pm.getProducts(+req.query.limit, res)) {
-    res.status(400).json({ error: "No hay productos cargados" });
-  } else {
-    pm.getProducts(+req.query.limit, res);
-  }
+  let products = await pm.getProducts(
+    +req.query.limit,
+    +req.query.page,
+    req.query.category,
+    req.query.status,
+    req.query.sort
+  );
+  res.status(200).json(products);
 });
 
-router.get("/:pid", (req, res) => {
+router.get("/:pid", async (req, res) => {
   res.setHeader("Content-Type", "application/json");
-  pm.getProductById(+req.params.pid, res);
+  await pm.getProductById(req.params.pid, res);
 });
 
 router.post("/", (req, res) => {
@@ -26,12 +28,12 @@ router.post("/", (req, res) => {
 
 router.put("/:pid", (req, res) => {
   res.setHeader("Content-Type", "application/json");
-  pm.updateProduct(+req.params.pid, req.body, res);
+  pm.updateProduct(req.params.pid, req.body, res);
 });
 
 router.delete("/:pid", (req, res) => {
   res.setHeader("Content-Type", "application/json");
-  pm.deleteProduct(+req.params.pid, res);
+  pm.deleteProduct(req.params.pid, res);
 });
 
 router.get("*", (req, res) => {

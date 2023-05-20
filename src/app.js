@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import session from "express-session";
 import { Server } from "socket.io";
 import MongoStore from "connect-mongo";
+import { messagesModel } from "./dao/models/messages.model.js";
 
 const pm = new ProductManager();
 const app = express();
@@ -59,6 +60,12 @@ serverSockets.on("connection", async (socket) => {
   console.log(`Se han conectado, socket id ${socket.id}`);
   let products = await pm.getProducts();
   socket.emit("products", products.payload);
+
+  socket.on("message", async (message) => {
+    await messagesModel.create(message);
+
+    serverSockets.emit("newMessage", message);
+  });
 });
 
 const connect = async () => {

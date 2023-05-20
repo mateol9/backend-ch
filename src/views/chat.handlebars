@@ -1,0 +1,12 @@
+<h1>Chat</h1>
+
+<input type="text" id="message" placeholder="Escriba su mensaje..." />
+
+<div id="messagesContainer">
+  {{#each messages}}
+    <p>{{this.user}}: {{this.message}}</p>
+  {{/each}}
+</div>
+
+<script src="socket.io/socket.io.js"></script>
+<script src="js/chat.js"></script>

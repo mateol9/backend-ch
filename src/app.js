@@ -3,9 +3,12 @@ import { engine } from "express-handlebars";
 import productsRouter from "./routes/productsDB.router.js";
 import cartsRouter from "./routes/cartsDB.router.js";
 import viewsRouter from "./routes/views.router.js";
+import sessionsRouter from "./routes/sessions.router.js";
 import ProductManager from "./dao/ProductManagerDB.js";
 import mongoose from "mongoose";
+import session from "express-session";
 import { Server } from "socket.io";
+import MongoStore from "connect-mongo";
 
 const pm = new ProductManager();
 const app = express();
@@ -13,6 +16,19 @@ const PORT = 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(
+  session({
+    secret: "secretWord",
+    resave: true,
+    saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl:
+        "mongodb+srv://mateol9:LQv8S7LuNHfo96Wo@cluster0.l0igvqy.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce",
+      ttl: 60,
+    }),
+  })
+);
 
 app.engine(
   "handlebars",
@@ -30,6 +46,7 @@ app.use(express.static("./src/public"));
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/api/sessions", sessionsRouter);
 app.use("/", viewsRouter);
 
 const serverHttp = app.listen(PORT, () => {

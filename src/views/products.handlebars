@@ -2,29 +2,44 @@
   Lista de productos
 </h1>
 
+<h2>Bienvenido/a</h2>
+<p>{{user.name}} {{user.lastName}} ({{user.role}})</p>
+<p>Edad: {{user.age}}</p>
+
+<a href="/api/sessions/logout">Cerrar Sesion</a>
+
 <div>
-  <ul style="list-style-type: none; font-weight: bold; font-size:20px; display: flex; flex-wrap: wrap; gap: 20px;">
+  <ul
+    style="list-style-type: none; font-weight: bold; font-size:20px; display: flex; flex-wrap: wrap; gap: 20px;"
+  >
     {{#each products.payload}}
-      <li style="margin-bottom: 20px; border: 2px solid black; padding: 10px; width: 300px; background-color: aquamarine; border-radius: 15px">
-    <div>
-      Producto: {{this.title}}
-    </div>
-    <div>
-      Categoria: {{this.category}}
-    </div>
-    <div>
-      Precio: {{this.price}}
-    </div>
-    <div>
-      Stock: {{this.stock}}
-    </div>
-    <div>
-      Descripcion: {{this.description}}
-    </div>
-    <div>
-      <button>Agregar al carrito</button>
-    </div>
-  </li>
+      <li
+        style="margin-bottom: 20px; border: 2px solid black; padding: 10px; width: 300px; background-color: aquamarine; border-radius: 15px"
+      >
+        <div>
+          Producto:
+          {{this.title}}
+        </div>
+        <div>
+          Categoria:
+          {{this.category}}
+        </div>
+        <div>
+          Precio:
+          {{this.price}}
+        </div>
+        <div>
+          Stock:
+          {{this.stock}}
+        </div>
+        <div>
+          Descripcion:
+          {{this.description}}
+        </div>
+        <div>
+          <button>Agregar al carrito</button>
+        </div>
+      </li>
     {{/each}}
   </ul>
 </div>
@@ -37,7 +52,7 @@
   <a href="{{products.nextLink}}">Página siguiente</a>
 {{/if}}
 <a href="/products?page={{products.totalPages}}">Ultima pagina</a>
-<br>
-<br>
+<br />
+<br />
 
 <script src="/js/products.js"></script>

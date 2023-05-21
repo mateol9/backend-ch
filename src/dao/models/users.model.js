@@ -9,6 +9,8 @@ const usersSchema = new Schema({
   age: Number,
   password: String,
   role: String,
+  github: Boolean,
+  githubProfile: Object,
 });
 
 export const usersModel = model(usersCol, usersSchema);

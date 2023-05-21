@@ -1,15 +1,18 @@
 import express from "express";
 import { engine } from "express-handlebars";
+import mongoose from "mongoose";
+import session from "express-session";
+import { Server } from "socket.io";
+import MongoStore from "connect-mongo";
+import passport from "passport";
+
 import productsRouter from "./routes/productsDB.router.js";
 import cartsRouter from "./routes/cartsDB.router.js";
 import viewsRouter from "./routes/views.router.js";
 import sessionsRouter from "./routes/sessions.router.js";
 import ProductManager from "./dao/ProductManagerDB.js";
-import mongoose from "mongoose";
-import session from "express-session";
-import { Server } from "socket.io";
-import MongoStore from "connect-mongo";
 import { messagesModel } from "./dao/models/messages.model.js";
+import { initializePassport } from "./config/passport.config.js";
 
 const pm = new ProductManager();
 const app = express();
@@ -30,6 +33,10 @@ app.use(
     }),
   })
 );
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.engine(
   "handlebars",

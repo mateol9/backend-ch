@@ -1,65 +1,50 @@
 import { Router } from "express";
-import { usersModel } from "../dao/models/users.model.js";
-import crypto from "crypto";
+import passport from "passport";
 
 const router = Router();
 
-router.post("/register", async (req, res) => {
-  let { name, lastName, email, age, password } = req.body;
-  let role;
+router.post(
+  "/register",
+  passport.authenticate("register", {
+    failureRedirect: "/register",
+    successRedirect: "/login",
+  }),
+  (req, res) => {}
+);
 
-  if (!email || !password) return res.sendStatus(400);
+router.post(
+  "/login",
+  passport.authenticate("login", { failureRedirect: "/login" }),
+  async (req, res) => {
+    req.session.user = {
+      name: req.user.name,
+      lastName: req.user.lastName,
+      email: req.user.email,
+      age: req.user.age,
+      role: req.user.role,
+    };
 
-  let user = await usersModel.findOne({ email });
-
-  if (user) return res.sendStatus(400);
-
-  if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-    role = "admin";
-  } else {
-    role = "user";
+    res.redirect("/products");
   }
+);
 
-  usersModel.create({
-    name,
-    lastName,
-    email,
-    age,
-    password: crypto
-      .createHash("sha256", "palabraSecreta")
-      .update(password)
-      .digest("base64"),
-    role,
-  });
+router.get("/github", passport.authenticate("github", {}), (req, res) => {});
 
-  res.redirect("/login");
-});
+router.get(
+  "/githubcallback",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  (req, res) => {
+    req.session.user = {
+      name: req.user.name,
+      lastName: req.user.lastName,
+      email: req.user.email,
+      age: req.user.age,
+      role: req.user.role,
+    };
 
-router.post("/login", async (req, res) => {
-  let { email, password } = req.body;
-
-  if (!email || !password) return res.sendStatus(400);
-
-  let user = await usersModel.findOne({
-    email: email,
-    password: crypto
-      .createHash("sha256", "palabraSecreta")
-      .update(password)
-      .digest("base64"),
-  });
-
-  if (!user) return res.sendStatus(400);
-
-  req.session.user = {
-    name: user.name,
-    lastName: user.lastName,
-    email: user.email,
-    age: user.age,
-    role: user.role,
-  };
-
-  res.redirect("/products");
-});
+    res.redirect("/products");
+  }
+);
 
 router.get("/logout", (req, res) => {
   req.session.destroy((error) => {

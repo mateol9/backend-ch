@@ -8,6 +8,7 @@ const usersSchema = new Schema({
   email: { type: String, unique: true },
   age: Number,
   password: String,
+  cart: { type: Schema.Types.ObjectId, ref: "carts" },
   role: String,
   github: Boolean,
   githubProfile: Object,

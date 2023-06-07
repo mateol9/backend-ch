@@ -1,10 +1,37 @@
 import passport from "passport";
 import local from "passport-local";
 import github from "passport-github2";
+import jwt from "passport-jwt";
 import { usersModel } from "../dao/models/users.model.js";
+import { cartsModel } from "../dao/models/carts.model.js";
 import { createHash, isValidPassword } from "../utils/utils.js";
 
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies.idToken;
+  }
+  return token;
+};
+
 export const initializePassport = () => {
+  passport.use(
+    "jwt",
+    new jwt.Strategy(
+      {
+        jwtFromRequest: jwt.ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: "mySecretKey",
+      },
+      (token, done) => {
+        try {
+          return done(null, token.user);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
   passport.use(
     "register",
     new local.Strategy(
@@ -29,12 +56,15 @@ export const initializePassport = () => {
             role = "user";
           }
 
+          let cart = await cartsModel.create({ products: [] });
+
           let user = await usersModel.create({
             name,
             lastName,
             email: username,
             age,
             password: createHash(password),
+            cart: cart._id,
             role,
           });
 
@@ -56,7 +86,7 @@ export const initializePassport = () => {
 
           let user = await usersModel.findOne({ email: username });
 
-          if (!user) return done(null, false);
+          if (!user) return done(null, false, { messages: "No user found" });
 
           if (!isValidPassword(password, user)) return done(null, false);
 
@@ -84,9 +114,11 @@ export const initializePassport = () => {
 
           let user = await usersModel.findOne({ email: email });
           if (!user) {
+            let cart = await cartsModel.create({ products: [] });
             let newUser = {
               name,
               email,
+              cart: cart._id,
               role: "user",
               github: true,
               githubProfile: profile._json,

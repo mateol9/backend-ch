@@ -2,9 +2,10 @@ import express from "express";
 import { engine } from "express-handlebars";
 import mongoose from "mongoose";
 import session from "express-session";
-import { Server } from "socket.io";
 import MongoStore from "connect-mongo";
+import { Server } from "socket.io";
 import passport from "passport";
+import cookieParser from "cookie-parser";
 
 import productsRouter from "./routes/productsDB.router.js";
 import cartsRouter from "./routes/cartsDB.router.js";
@@ -17,26 +18,29 @@ import { initializePassport } from "./config/passport.config.js";
 const pm = new ProductManager();
 const app = express();
 const PORT = 8080;
+const dbURL =
+  "mongodb+srv://mateol9:LQv8S7LuNHfo96Wo@cluster0.l0igvqy.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce";
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 
-app.use(
-  session({
-    secret: "secretWord",
-    resave: true,
-    saveUninitialized: true,
-    store: MongoStore.create({
-      mongoUrl:
-        "mongodb+srv://mateol9:LQv8S7LuNHfo96Wo@cluster0.l0igvqy.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce",
-      ttl: 60,
-    }),
-  })
-);
+// app.use(
+//   session({
+//     secret: "secretWord",
+//     resave: true,
+//     saveUninitialized: true,
+//     store: MongoStore.create({
+//       mongoUrl:
+//         "mongodb+srv://mateol9:LQv8S7LuNHfo96Wo@cluster0.l0igvqy.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce",
+//       ttl: 60,
+//     }),
+//   })
+// );
 
 initializePassport();
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 app.engine(
   "handlebars",
@@ -77,9 +81,7 @@ serverSockets.on("connection", async (socket) => {
 
 const connect = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://mateol9:LQv8S7LuNHfo96Wo@cluster0.l0igvqy.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce"
-    );
+    await mongoose.connect(dbURL);
     console.log("Conexion correcta");
   } catch (error) {
     console.log(error);

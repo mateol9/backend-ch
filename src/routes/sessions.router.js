@@ -1,59 +1,34 @@
 import { Router } from "express";
-import passport from "passport";
+import { generateToken, passportCall } from "../utils/utils.js";
 
 const router = Router();
 
-router.post(
-  "/register",
-  passport.authenticate("register", {
-    failureRedirect: "/register",
-    successRedirect: "/login",
-  }),
-  (req, res) => {}
-);
+router.get("/current", passportCall("jwt"), (req, res) => {
+  res.send(req.user);
+});
 
-router.post(
-  "/login",
-  passport.authenticate("login", { failureRedirect: "/login" }),
-  async (req, res) => {
-    req.session.user = {
-      name: req.user.name,
-      lastName: req.user.lastName,
-      email: req.user.email,
-      age: req.user.age,
-      role: req.user.role,
-    };
+router.post("/register", passportCall("register"), (req, res) => {});
 
-    res.redirect("/products");
-  }
-);
+router.post("/login", passportCall("login"), async (req, res) => {
+  let token = generateToken(req.user);
 
-router.get("/github", passport.authenticate("github", {}), (req, res) => {});
+  res
+    .cookie("idToken", token, { maxAge: 1000 * 60 * 60, httpOnly: true })
+    .redirect("/products");
+});
 
-router.get(
-  "/githubcallback",
-  passport.authenticate("github", { failureRedirect: "/login" }),
-  (req, res) => {
-    req.session.user = {
-      name: req.user.name,
-      lastName: req.user.lastName,
-      email: req.user.email,
-      age: req.user.age,
-      role: req.user.role,
-    };
+router.get("/github", passportCall("github"), (req, res) => {});
 
-    res.redirect("/products");
-  }
-);
+router.get("/githubcallback", passportCall("github"), (req, res) => {
+  let token = generateToken(req.user);
+
+  res
+    .cookie("idToken", token, { maxAge: 1000 * 60 * 60, httpOnly: true })
+    .redirect("/products");
+});
 
 router.get("/logout", (req, res) => {
-  req.session.destroy((error) => {
-    if (error) {
-      res.sendStatus(500);
-    } else {
-      res.redirect("/login");
-    }
-  });
+  res.clearCookie("idToken").redirect("/login");
 });
 
 export default router;

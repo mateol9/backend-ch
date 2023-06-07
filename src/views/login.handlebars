@@ -1,9 +1,16 @@
 <h2>Login usuarios:</h2>
 
-<form action="/api/sessions/login" method="post">
-  <input type="email" placeholder="ingrese se email" name="email" />
-  <input type="password" placeholder="ingrese su contraseña" name="password" />
+<form action="/api/sessions/login" method="post" id="loginForm">
+  <input type="email" placeholder="ingrese se email" name="email" id="email" />
+  <input
+    type="password"
+    placeholder="ingrese su contraseña"
+    name="password"
+    id="password"
+  />
   <input type="submit" value="Ingresar" />
 </form>
 <p>Para registrarse ingresa <a href="/register">aqui</a></p>
 <p>Acceder con <a href="/api/sessions/github">Github</a></p>
+
+<script src="../public//js/login.js"></script>
